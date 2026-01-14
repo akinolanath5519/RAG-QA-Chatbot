@@ -10,7 +10,7 @@ langgraph
 chromadb
 beautifulsoup4
 arxiv
-
+pypdf
 
 # Core LangChain packages
 langchain
