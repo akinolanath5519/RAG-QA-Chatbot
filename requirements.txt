@@ -24,7 +24,7 @@ playwright
 
 # Groq integration
 langchain-groq
-
+langchain_chroma
 
 # Embeddings & Transformers
 sentence-transformers==2.2.2
