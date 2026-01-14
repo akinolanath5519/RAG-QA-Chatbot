@@ -22,6 +22,10 @@ langchain_classic
 langgraph
 playwright
 
+# Groq integration
+langchain-groq
+
+
 # Embeddings & Transformers
 sentence-transformers==2.2.2
 transformers
