@@ -12,7 +12,7 @@ beautifulsoup4
 arxiv
 pypdf
 
-# Core LangChain packages
+# # Core LangChain packages
 langchain
 langchain-community
 langchain-core
@@ -22,16 +22,16 @@ langchain_classic
 langgraph
 playwright
 
-# Groq integration
+# # Groq integration
 langchain-groq
 langchain_chroma
 
-# Embeddings & Transformers
-sentence-transformers==2.2.2
+# # Embeddings & Transformers
 transformers
 torch
+huggingface_hub>=1.0.0
 
-# Vector store
+# # Vector store
 chromadb
 faiss-cpu
 
@@ -45,4 +45,5 @@ python-dotenv
 langchain-openai
 
 
+# streamlit
 streamlit
