@@ -1,14 +1,44 @@
-streamlit
-langchain
-langchain-core
-langchain-community
-langchain-text-splitters
-langchain-chroma
-langchain-groq
-langchain-huggingface
-
-chromadb
-sentence-transformers
-pypdf
+sentence-transformers==2.2.2
+langchain_huggingface
+PyYAML
+langchain-openai
 python-dotenv
+langchain-community
+langchain-core
+langchain-text-splitters
+langgraph
+chromadb
+beautifulsoup4
+arxiv
+
+
+# Core LangChain packages
+langchain
+langchain-community
+langchain-core
+langchain-text-splitters
+langchain-huggingface
+langchain_classic
+langgraph
+playwright
+
+# Embeddings & Transformers
+sentence-transformers==2.2.2
+transformers
 torch
+
+# Vector store
+chromadb
+faiss-cpu
+
+# Loaders & Utilities
+beautifulsoup4
+arxiv
+PyYAML
+python-dotenv
+
+# Optional (for OpenAI integration)
+langchain-openai
+
+
+streamlit
