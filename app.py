@@ -156,7 +156,7 @@ st.markdown("""
 # Page Configuration
 # -------------------------------------------------------------------
 st.set_page_config(
-    page_title="PDF Chat Assistant",
+    page_title="Customer Service Chat Bot",
     page_icon="📄",
     layout="wide"
 )
