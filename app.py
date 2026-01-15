@@ -181,14 +181,13 @@ with st.sidebar:
     
     # API Key
     api_key = st.text_input(
-        "Groq API Key",
+        "Password",
         type="password",
-        help="Enter your Groq API key to enable the chatbot"
+        help="Enter your password to enable the chatbot"
     )
     
     if not api_key:
-        st.warning("Please enter your API key")
-    
+        st.warning("Please enter your password")
     # Session ID
     session_id = st.text_input(
         "Session ID",
