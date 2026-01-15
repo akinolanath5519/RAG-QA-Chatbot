@@ -1,48 +1,76 @@
-sentence-transformers==2.2.2
-langchain_huggingface
-PyYAML
-langchain-openai
-python-dotenv
-langchain-community
-langchain-core
-langchain-text-splitters
-langgraph
-chromadb
-beautifulsoup4
-arxiv
-pypdf
+# sentence-transformers==2.2.2
+# langchain_huggingface
+# PyYAML
+# langchain-openai
+# python-dotenv
+# langchain-community
+# langchain-core
+# langchain-text-splitters
+# langgraph
+# chromadb
+# beautifulsoup4
+# arxiv
+# pypdf
 
-# Core LangChain packages
-langchain
-langchain-community
-langchain-core
-langchain-text-splitters
-langchain-huggingface
-langchain_classic
-langgraph
-playwright
+# # Core LangChain packages
+# langchain
+# langchain-community
+# langchain-core
+# langchain-text-splitters
+# langchain-huggingface
+# langchain_classic
+# langgraph
+# playwright
+
+# # Groq integration
+# langchain-groq
+# langchain_chroma
+
+# # Embeddings & Transformers
+# sentence-transformers==2.2.2
+# transformers
+# torch
+
+# # Vector store
+# chromadb
+# faiss-cpu
+
+# # Loaders & Utilities
+# beautifulsoup4
+# arxiv
+# PyYAML
+# python-dotenv
+
+# # Optional (for OpenAI integration)
+# langchain-openai
+
+
+# streamlit
+
+
+
+
+# Core dependencies
+streamlit>=1.28.0
+
+# LangChain packages
+langchain>=0.1.0
+langchain-community>=0.0.10
+langchain-core>=0.1.0
+langchain-text-splitters>=0.0.1
 
 # Groq integration
-langchain-groq
-langchain_chroma
-
-# Embeddings & Transformers
-sentence-transformers==2.2.2
-transformers
-torch
+langchain-groq>=0.1.0
 
 # Vector store
-chromadb
-faiss-cpu
+chromadb>=0.4.22
+langchain-chroma>=0.1.0
 
-# Loaders & Utilities
-beautifulsoup4
-arxiv
-PyYAML
-python-dotenv
+# Embeddings (using sentence-transformers directly)
+sentence-transformers>=2.2.2
 
-# Optional (for OpenAI integration)
-langchain-openai
+# PDF processing
+pypdf>=3.17.0
 
-
-streamlit
+# Utilities
+python-dotenv>=1.0.0
