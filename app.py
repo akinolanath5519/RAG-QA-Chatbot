@@ -609,7 +609,7 @@ with footer_col3:
 # -------------------------------------------------------------------
 # Initial State Message
 # -------------------------------------------------------------------
-elif not uploaded_files:
+if not st.session_state.processing_complete or not api_key:
     # Welcome message
     st.markdown("""
     <div class='card'>
@@ -664,3 +664,15 @@ elif not uploaded_files:
 # -------------------------------------------------------------------
 # Update requirements.txt reminder
 # -------------------------------------------------------------------
+st.sidebar.markdown("---")
+st.sidebar.caption("Make sure your `requirements.txt` includes:")
+st.sidebar.code("""
+streamlit
+langchain
+langchain-community
+langchain-core
+langchain-groq
+langchain-chroma
+sentence-transformers
+pypdf
+""")
