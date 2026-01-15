@@ -1,5 +1,6 @@
 # app.py
 # RAG Q&A Conversation With PDF Including Chat History
+# CUSTOMER SERVICE CHAT BOT (CLIENT DEMO VERSION)
 
 import os
 import streamlit as st
@@ -24,6 +25,11 @@ try:
 except ImportError:
     SENTENCE_TRANSFORMERS_AVAILABLE = False
     st.error("sentence-transformers is not installed. Please add it to requirements.txt")
+
+# -------------------------------------------------------------------
+# 🔐 DEMO PASSWORD (CHANGE THIS TO ANYTHING YOU LIKE)
+# -------------------------------------------------------------------
+DEMO_PASSWORD = "demo123"   # <<< CHANGE THIS BEFORE SENDING TO CLIENT
 
 # -------------------------------------------------------------------
 # Custom CSS for Minimal Design
@@ -69,8 +75,6 @@ st.markdown("""
     
     .stButton > button:hover {
         background-color: #2563eb;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 6px rgba(59, 130, 246, 0.2);
     }
     
     .card {
@@ -104,43 +108,55 @@ with col2:
             💬 Customer Service Chat Bot
         </h1>
         <p style='color: #64748b; font-size: 1.1rem;'>
-            Upload your knowledge-base PDFs and let AI assist your customers
+            Upload your knowledge-base PDFs and let the assistant help your customers
         </p>
     </div>
     """, unsafe_allow_html=True)
 
 # -------------------------------------------------------------------
-# Sidebar
+# Sidebar (CLIENT ONLY ENTERS DEMO PASSWORD)
 # -------------------------------------------------------------------
 with st.sidebar:
-    st.markdown("### ⚙️ Settings")
-    
-    api_key = st.text_input(
-        "Password",
+    st.markdown("### 🔐 Demo Access")
+
+    demo_password = st.text_input(
+        "Enter Demo Password",
         type="password",
-        help="Enter your password to enable the chatbot"
+        help="This is provided by the product owner"
     )
-    
-    if not api_key:
-        st.warning("Please enter your password")
+
+    access_granted = demo_password == DEMO_PASSWORD
+
+    if not demo_password:
+        st.warning("Please enter the demo password")
+    elif not access_granted:
+        st.error("Incorrect demo password")
+
+    st.markdown("---")
 
     session_id = st.text_input(
         "Session ID",
         value="default_session",
-        help="Unique identifier for your chat session"
+        help="Unique identifier for this chat session"
     )
-    
+
     st.markdown("---")
     st.markdown("### ℹ️ About")
     st.info("""
     This is a Customer Service Chat Bot that:
     - Learns from your uploaded PDFs
-    - Answers customer questions using AI
+    - Answers customer questions
     - Keeps chat history per session
     """)
-    
-    st.markdown("---")
-    st.caption("Made with ❤️ using Streamlit & LangChain")
+
+# -------------------------------------------------------------------
+# Get Groq API Key from Streamlit Secrets (CLIENT NEVER SEES THIS)
+# -------------------------------------------------------------------
+try:
+    GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
+except Exception:
+    st.error("GROQ_API_KEY is missing in Streamlit secrets")
+    st.stop()
 
 # Stop if embeddings package missing
 if not SENTENCE_TRANSFORMERS_AVAILABLE:
@@ -180,77 +196,80 @@ main_col1, main_col2 = st.columns([1, 1])
 
 with main_col1:
     st.markdown("### 📤 Upload Knowledge Base (PDFs)")
-    
+
     uploaded_files = st.file_uploader(
         "Choose PDF files",
         type="pdf",
         accept_multiple_files=True,
         label_visibility="collapsed"
     )
-    
+
     if uploaded_files:
         st.markdown("<div class='card'>", unsafe_allow_html=True)
         st.markdown("**Uploaded Files:**")
         for file in uploaded_files:
             st.markdown(f"📄 **{file.name}** ({file.size:,} bytes)")
         st.markdown("</div>", unsafe_allow_html=True)
-        
+
         if st.button("🚀 Process Documents", type="primary", use_container_width=True):
-            if not api_key:
-                st.error("Please enter your password in the sidebar first")
+            if not access_granted:
+                st.error("Please enter the correct demo password first")
             else:
                 with st.spinner("Processing documents..."):
                     try:
                         documents = []
-                        
+
                         with tempfile.TemporaryDirectory() as temp_dir:
                             for uploaded_file in uploaded_files:
                                 temp_path = Path(temp_dir) / uploaded_file.name
                                 with open(temp_path, "wb") as f:
                                     f.write(uploaded_file.getvalue())
-                                
+
                                 loader = PyPDFLoader(str(temp_path))
                                 documents.extend(loader.load())
-                        
+
                         text_splitter = RecursiveCharacterTextSplitter(
                             chunk_size=5000,
                             chunk_overlap=500,
                         )
                         splits = text_splitter.split_documents(documents)
-                        
+
                         embeddings = SentenceTransformerEmbeddings()
                         texts = [doc.page_content for doc in splits]
                         metadatas = [doc.metadata for doc in splits]
-                        
+
                         vectorstore = Chroma.from_texts(
                             texts=texts,
                             embedding=embeddings,
                             metadatas=metadatas,
                         )
-                        
+
                         st.session_state.vectorstore = vectorstore
                         st.session_state.retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
                         st.session_state.processing_complete = True
-                        
+
                         st.success(f"✅ Processed {len(documents)} pages into {len(splits)} chunks")
                         st.balloons()
-                        
+
                     except Exception as e:
                         st.error(f"Error processing documents: {str(e)}")
     else:
         st.info("👆 Upload PDFs to train the Customer Service Chat Bot")
 
+# -------------------------------------------------------------------
+# CHAT SECTION (ONLY IF DEMO PASSWORD IS CORRECT)
+# -------------------------------------------------------------------
 with main_col2:
-    if uploaded_files and api_key and st.session_state.get('processing_complete'):
+    if uploaded_files and access_granted and st.session_state.get('processing_complete'):
         st.markdown("### 💬 Customer Service Chat")
-        
-        llm = ChatGroq(groq_api_key=api_key, model_name="llama-3.1-8b-instant")
+
+        llm = ChatGroq(groq_api_key=GROQ_API_KEY, model_name="llama-3.1-8b-instant")
 
         contextualize_q_system_prompt = (
             "Given a chat history and the latest user question, "
             "rewrite it as a standalone question."
         )
-        
+
         contextualize_q_prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", contextualize_q_system_prompt),
@@ -258,7 +277,7 @@ with main_col2:
                 ("human", "{input}"),
             ]
         )
-        
+
         contextualize_q_chain = contextualize_q_prompt | llm | StrOutputParser()
 
         qa_system_prompt = (
@@ -267,7 +286,7 @@ with main_col2:
             "If you don't know, say you don't know. Keep it concise.\n\n"
             "Context:\n{context}"
         )
-        
+
         qa_prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", qa_system_prompt),
